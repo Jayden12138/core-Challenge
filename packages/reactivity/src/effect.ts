@@ -7,7 +7,9 @@ class ActiveEffect {
 	run() {
 		activeEffect = this
 
-		this._fn()
+		let res = this._fn()
+
+		return res
 	}
 }
 
@@ -38,4 +40,6 @@ export function trigger(target, key) {
 export function effect(func) {
 	const _effect = new ActiveEffect(func)
 	_effect.run()
+
+	return _effect.run.bind(_effect)
 }
