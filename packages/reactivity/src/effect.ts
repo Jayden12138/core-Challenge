@@ -1,5 +1,7 @@
 class ActiveEffect {
 	private _fn
+	active = true
+	deps = []
 	constructor(func, public scheduler?) {
 		this._fn = func
 	}
@@ -11,11 +13,28 @@ class ActiveEffect {
 
 		return res
 	}
+
+	stop() {
+		if (this.active) {
+			cleanupEffect(this)
+			this.active = false
+		}
+	}
+}
+
+function cleanupEffect(effect) {
+	effect.deps.forEach((dep: any) => {
+		dep.delete(effect)
+	})
+
+	effect.deps.length = 0
 }
 
 const targetMap = new Map()
 let activeEffect
 export function track(target, key) {
+	if (!activeEffect) return
+
 	let depsMap = targetMap.get(target)
 	if (!depsMap) {
 		targetMap.set(target, (depsMap = new Map()))
@@ -28,6 +47,7 @@ export function track(target, key) {
 
 	if (!deps.has(activeEffect)) {
 		deps.add(activeEffect)
+		activeEffect.deps.push(deps)
 	}
 }
 export function trigger(target, key) {
@@ -47,5 +67,13 @@ export function effect(func, options: any = {}) {
 	const _effect = new ActiveEffect(func, options.scheduler)
 	_effect.run()
 
-	return _effect.run.bind(_effect)
+	const runner: any = _effect.run.bind(_effect)
+
+	runner._effect = _effect
+
+	return runner
+}
+
+export function stop(runner) {
+	runner._effect.stop()
 }
