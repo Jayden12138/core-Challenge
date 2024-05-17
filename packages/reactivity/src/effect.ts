@@ -1,7 +1,10 @@
+import { extend } from '../../shared/index'
+
 class ActiveEffect {
 	private _fn
 	active = true
 	deps = []
+	onStop?: () => void
 	constructor(func, public scheduler?) {
 		this._fn = func
 	}
@@ -17,6 +20,9 @@ class ActiveEffect {
 	stop() {
 		if (this.active) {
 			cleanupEffect(this)
+			if (this.onStop) {
+				this.onStop()
+			}
 			this.active = false
 		}
 	}
@@ -66,6 +72,8 @@ export function trigger(target, key) {
 export function effect(func, options: any = {}) {
 	const _effect = new ActiveEffect(func, options.scheduler)
 	_effect.run()
+
+	extend(_effect, options)
 
 	const runner: any = _effect.run.bind(_effect)
 
