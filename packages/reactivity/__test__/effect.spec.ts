@@ -1,5 +1,3 @@
-import { effect, reactive } from '../src'
-
 describe('effect', () => {
 	it('happy path', () => {
 		const original = { foo: 1 }
