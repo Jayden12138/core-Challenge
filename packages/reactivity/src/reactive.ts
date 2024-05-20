@@ -1,4 +1,8 @@
-import { mutableHandler, readonlyHandler } from './baseHandlers'
+import {
+	mutableHandler,
+	readonlyHandler,
+	shallowReadonlyHandler,
+} from './baseHandlers'
 import { ReactiveFlags } from './constants'
 
 export function reactive(raw) {
@@ -7,6 +11,10 @@ export function reactive(raw) {
 
 export function readonly(raw) {
 	return createActiveObject(raw, readonlyHandler)
+}
+
+export function shallowReadonly(raw) {
+	return createActiveObject(raw, shallowReadonlyHandler)
 }
 
 function createActiveObject(raw, baseHandler) {
