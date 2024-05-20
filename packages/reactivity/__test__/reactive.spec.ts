@@ -1,3 +1,5 @@
+import { isReactive, isReadonly, reactive, readonly } from '../src'
+
 describe('reactive', () => {
 	it('isReactive happy path', () => {
 		const original = { foo: 1 }
