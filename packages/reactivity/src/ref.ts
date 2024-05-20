@@ -5,6 +5,7 @@ class RefImpl {
 	_val
 	_rawValue
 	deps = new Set()
+	public readonly __v_isRef = true
 	constructor(value) {
 		this._val = toReactive(value)
 		this._rawValue = value
@@ -33,4 +34,12 @@ function trackRefValue(ref) {
 	if (isTracking()) {
 		trackEffect(ref.deps)
 	}
+}
+
+export function isRef(value) {
+	return !!value.__v_isRef
+}
+
+export function unRef(value) {
+	return isRef(value) ? value.value : value
 }
