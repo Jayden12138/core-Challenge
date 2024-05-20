@@ -1,4 +1,4 @@
-import { effect, isRef, reactive, ref, unRef } from '../src'
+import { effect, isRef, proxyRefs, reactive, ref, unRef } from '../src'
 
 describe('ref', () => {
 	it('happy path', () => {
