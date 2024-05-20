@@ -1,3 +1,5 @@
+import { effect, ref } from '../src'
+
 describe('ref', () => {
 	it('happy path', () => {
 		const a = ref(1)
