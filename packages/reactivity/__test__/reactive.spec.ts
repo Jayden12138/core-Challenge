@@ -1,4 +1,4 @@
-import { isReactive, isReadonly, reactive, readonly } from '../src'
+import { isProxy, isReactive, isReadonly, reactive, readonly } from '../src'
 
 describe('reactive', () => {
 	it('isReactive happy path', () => {
