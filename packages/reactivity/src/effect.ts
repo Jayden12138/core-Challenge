@@ -1,5 +1,6 @@
 import { extend } from '../../shared/index'
 
+let shouldTrack
 class ActiveEffect {
 	private _fn
 	active = true
@@ -10,9 +11,16 @@ class ActiveEffect {
 	}
 
 	run() {
+		if (!this.active) {
+			return this._fn()
+		}
+
 		activeEffect = this
+		shouldTrack = true
 
 		let res = this._fn()
+
+		shouldTrack = false
 
 		return res
 	}
@@ -39,7 +47,7 @@ function cleanupEffect(effect) {
 const targetMap = new Map()
 let activeEffect
 export function track(target, key) {
-	if (!activeEffect) return
+	if (!isTracking()) return
 
 	let depsMap = targetMap.get(target)
 	if (!depsMap) {
@@ -84,4 +92,8 @@ export function effect(func, options: any = {}) {
 
 export function stop(runner) {
 	runner._effect.stop()
+}
+
+function isTracking() {
+	return shouldTrack && activeEffect !== undefined
 }
