@@ -1,7 +1,7 @@
 import { extend } from '../../shared/index'
 
 let shouldTrack
-class ActiveEffect {
+export class ActiveEffect {
 	private _fn
 	active = true
 	deps = []

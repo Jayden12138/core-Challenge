@@ -1,3 +1,5 @@
+import { computed, reactive } from '../src'
+
 describe('computed', () => {
 	it('happy path', () => {
 		const user = reactive({ age: 1 })
