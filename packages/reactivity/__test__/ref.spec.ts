@@ -81,4 +81,32 @@ describe('ref', () => {
 		expect(proxyUser.age).toBe(10)
 		expect(user.age.value).toBe(10)
 	})
+
+	// https://cn.vuejs.org/guide/essentials/reactivity-fundamentals.html#ref-unwrapping-as-reactive-object-property
+	it('should synchronize state.count with ref count and allow replacing with a new ref', () => {
+		const count = ref(0)
+		const state = reactive({
+			count,
+		})
+
+		// Initial values
+		expect(state.count).toBe(0)
+		expect(count.value).toBe(0)
+
+		// Modify state.count and ensure synchronization
+		state.count = 1
+		expect(state.count).toBe(1)
+		expect(count.value).toBe(1)
+
+		// Assign a new ref to state.count
+		const otherCount = ref(2)
+		state.count = otherCount
+		expect(state.count).toBe(2)
+		expect(count.value).toBe(1)
+
+		// Modify the new ref and check synchronization
+		otherCount.value = 3
+		expect(state.count).toBe(3)
+		expect(count.value).toBe(1)
+	})
 })
