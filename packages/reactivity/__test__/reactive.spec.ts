@@ -59,4 +59,17 @@ describe('reactive', () => {
 
 		expect(isProxy(observed)).toBe(true)
 	})
+
+	// https://cn.vuejs.org/guide/essentials/reactivity-fundamentals.html#reactive-proxy-vs-original-1
+	// Consistency of agent
+	it('should return the same proxy for the same raw object', () => {
+		const raw = { foo: 1 }
+		const proxy = reactive(raw)
+
+		// Repeated calls with the same raw object should return the same proxy
+		expect(reactive(raw)).toBe(proxy)
+
+		// Calling reactive with the proxy itself should return the same proxy
+		expect(reactive(proxy)).toBe(proxy)
+	})
 })
