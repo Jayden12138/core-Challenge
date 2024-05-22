@@ -6,20 +6,37 @@ import {
 } from './baseHandlers'
 import { ReactiveFlags } from './constants'
 
+export const reactiveMap = new WeakMap()
+export const readonlyMap = new WeakMap()
+export const shallowReadonlyMap = new WeakMap()
+
 export function reactive(raw) {
-	return createActiveObject(raw, mutableHandler)
+	return createActiveObject(raw, mutableHandler, reactiveMap)
 }
 
 export function readonly(raw) {
-	return createActiveObject(raw, readonlyHandler)
+	return createActiveObject(raw, readonlyHandler, readonlyMap)
 }
 
 export function shallowReadonly(raw) {
-	return createActiveObject(raw, shallowReadonlyHandler)
+	return createActiveObject(raw, shallowReadonlyHandler, shallowReadonlyMap)
 }
 
-function createActiveObject(raw, baseHandler) {
-	return new Proxy(raw, baseHandler)
+function createActiveObject(raw, baseHandler, proxyMap) {
+	// if it is already a Proxy, return it
+	const existingProxy = proxyMap.get(raw)
+	if (existingProxy) {
+		return existingProxy
+	}
+
+	// target is already a Proxy, return it
+	if (isProxy(raw)) {
+		return raw
+	}
+
+	const proxy = new Proxy(raw, baseHandler)
+	proxyMap.set(raw, proxy)
+	return proxy
 }
 
 export function isReactive(obj) {
