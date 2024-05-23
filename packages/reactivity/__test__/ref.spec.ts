@@ -107,4 +107,49 @@ describe('ref', () => {
 		expect(state.count).toBe(3)
 		expect(count.value).toBe(1)
 	})
+
+	it('happy path: should convert a normal value to ref', () => {
+		const valueRef = toRef(1)
+		expect(valueRef.value).toBe(1)
+	})
+
+	it('toRef getter', () => {
+		const x = toRef(() => 1)
+		expect(x.value).toBe(1)
+		expect(isRef(x)).toBe(true)
+		expect(unRef(x)).toBe(1)
+
+		//@ts-expect-error
+		expect(() => (x.value = 123)).toThrow()
+
+		expect(isReadonly(x)).toBe(true)
+	})
+
+	it('toRef', () => {
+		const a = reactive({
+			x: 1,
+		})
+		const x = toRef(a, 'x')
+		expect(isRef(x)).toBe(true)
+		expect(x.value).toBe(1)
+
+		a.x = 2
+		expect(x.value).toBe(2)
+
+		x.value = 3
+		expect(a.x).toBe(3)
+
+		let dummy
+		effect(() => {
+			dummy = x.value
+		})
+		expect(dummy).toBe(x.value)
+
+		a.x = 4
+		expect(dummy).toBe(4)
+
+		// should keep ref
+		const r = { x: ref(1) }
+		expect(isRef(r, 'x')).toBe(r.x)
+	})
 })
